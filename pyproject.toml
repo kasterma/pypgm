@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "pypgm"
+version = "0.0.0"
+description = "Playing with PGM in Python"
+authors = ["Bart Kastermans <kasterma@kasterma.net>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.26.2"
+pandas = "^2.1.4"
+matplotlib = "^3.8.2"
+click = "^8.1.7"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.1.8"
+mypy = "^1.7.1"
+pytest = "^7.4.3"
+icecream = "^2.1.3"
+python-language-server = "^0.36.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
