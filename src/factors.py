@@ -126,10 +126,17 @@ class Factor:
             mul_values[idx] = self.values[idx_self] * other.values[idx_other]
         return Factor(mul_scope, mul_values)
 
-    def marginalize(self, scope: Scope) -> 'Factor':
+    def marginalize(self, scope: Scope) -> "Factor":
         assert all(rv in self.scope.rvs for rv in scope.rvs)
         marg_values = [0] * len(scope)
         for idx in range(len(self.scope)):
             vals = self.scope._values(idx)
             marg_values[scope[vals]] += self.values[idx]
         return Factor(scope, marg_values)
+
+    def reduce(self, val: dict) -> "Factor":
+        red_scope = Scope([rv for rv in self.scope.rvs if rv.name not in val.keys()])
+        red_values = [0] * len(red_scope)
+        for idx in range(len(red_scope)):
+            red_values[idx] = self.values[self.scope[red_scope._values(idx) | val]]
+        return Factor(red_scope, red_values)

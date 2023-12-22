@@ -124,9 +124,7 @@ def test_factor():
     assert sum(values) == pytest.approx(1.0)
     jd_idg = Factor(jd_scope, values)
 
-    id_unnorm = Factor(
-        Scope(I, D), [0.126, 0.009, 0.252, 0.06]
-    )  # jd_idg restricted to G = 1, not normalized
+    id_unnorm = Factor(Scope(I, D), [0.126, 0.009, 0.252, 0.06])
 
     cpd_G = Factor(  # noqa: F841   to be used later
         jd_scope, [0.3, 0.4, 0.3, 0.05, 0.25, 0.7, 0.9, 0.08, 0.02, 0.5, 0.3, 0.2]
@@ -161,3 +159,9 @@ def test_factor():
     assert F_3.marginalize(F_3.scope) == F_3
 
     assert id_unnorm.marginalize(Scope(I)).approx(Factor(Scope(I), [0.135, 0.312]))
+
+    assert F_3.reduce({"C": 1}) == Factor(
+        Scope(Aa, B), [0.25, 0.08, 0.05, 0, 0.15, 0.09]
+    )
+
+    assert id_unnorm.reduce({"D": 1}) == Factor(Scope(I), [0.009, 0.06])
