@@ -7,7 +7,7 @@ from itertools import chain, combinations
 random_variable = st.builds(
     RandomVariable,
     st.text(alphabet=string.ascii_uppercase, min_size=1),
-    st.lists(st.integers()),
+    st.lists(st.integers(), min_size=1, unique=True),
 )
 
 
@@ -37,11 +37,22 @@ def test_random_variable():
 @given(random_variable)
 def test_random_random_variable(r):
     assert r == r
+    for v in r.values:
+        assert r.values[r[v]] == v
+    for i in range(len(r)):
+        assert r[r.values[i]] == i
 
 
 def test_scope():
     s = Scope([RandomVariable("X", [1, 2, 3]), RandomVariable("Y", [1, 2, 3])])
     assert len(s) == 9
+    assert s.strides == [3, 1]
+    assert s[{"X": 1, "Y": 1}] == 0
+    assert s[{"X": 1, "Y": 3}] == 2
+    assert s[{"X": 2, "Y": 1}] == 3
+    assert s._values(3) == {"X": 2, "Y": 1}
+    assert s[{"X": 3, "Y": 2}] == 7
+    assert s._values(7) == {"X": 3, "Y": 2}
     u = Scope(
         [
             RandomVariable("X", [1, 2, 3]),
@@ -50,6 +61,9 @@ def test_scope():
         ]
     )
     assert len(u) == 27
+    assert u.strides == [9, 3, 1]
+    assert u[{"X": 2, "Y": 2, "Z": 2}] == 13
+    assert u._values(13) == {"X": 2, "Y": 2, "Z": 2}
     with pytest.raises(AssertionError):
         Scope([RandomVariable("X", [1, 2, 3]), RandomVariable("X", [1, 2, 3])])
 
@@ -129,4 +143,13 @@ def test_factor():
     F_3 = Factor(
         Scope(Aa, B, C),
         [0.25, 0.35, 0.08, 0.16, 0.05, 0.07, 0, 0, 0.15, 0.21, 0.09, 0.18],
+    )
+
+    assert F_3.approx(F_1 * F_2)
+
+    assert (jd_idg * jd_idg).approx(Factor(jd_scope, [val**2 for val in values]))
+
+    zz = RandomVariable("ZZ", [1, 2])
+    assert (Factor(Scope(x), [11, 22, 33]) * Factor(Scope(zz), [1, 2])).approx(
+        Factor(Scope(x, zz), [11, 22, 22, 44, 33, 66])
     )
