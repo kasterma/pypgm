@@ -11,7 +11,7 @@ random_variable = st.builds(
 )
 
 
-def nonempty_sublists(l):
+def nonempty_sublists(l):  # noqa: E741
     return list(chain.from_iterable(combinations(l, k) for k in range(1, len(l) + 1)))
 
 
@@ -103,7 +103,7 @@ def test_factor():
 
     f.as_dataframe()
 
-    I = RandomVariable("I", [0, 1])
+    I = RandomVariable("I", [0, 1])  # noqa: E741
     D = RandomVariable("D", [0, 1])
     G = RandomVariable("G", [1, 2, 3])
     jd_scope = Scope(I, D, G)
@@ -124,17 +124,17 @@ def test_factor():
     assert sum(values) == pytest.approx(1.0)
     jd_idg = Factor(jd_scope, values)
 
-    id_unnorm = Factor(
+    id_unnorm = Factor(  # noqa: F841   to be used later
         Scope(I, D), [0.126, 0.009, 0.252, 0.06]
     )  # jd_idg restricted to G = 1, not normalized
 
-    cpd_G = Factor(
+    cpd_G = Factor(  # noqa: F841   to be used later
         jd_scope, [0.3, 0.4, 0.3, 0.05, 0.25, 0.7, 0.9, 0.08, 0.02, 0.5, 0.3, 0.2]
     )  # uncertain about order
 
     A = RandomVariable("A", [0, 1])
     B = RandomVariable("B", [0, 1])
-    phi = Factor(Scope(A, B), [30, 5, 1, 10])
+    phi = Factor(Scope(A, B), [30, 5, 1, 10])  # noqa: F841   to be used later
 
     Aa = RandomVariable("Aa", [1, 2, 3])
     F_1 = Factor(Scope(Aa, B), [0.5, 0.8, 0.1, 0, 0.3, 0.9])
