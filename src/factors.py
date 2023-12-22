@@ -140,3 +140,11 @@ class Factor:
         for idx in range(len(red_scope)):
             red_values[idx] = self.values[self.scope[red_scope._values(idx) | val]]
         return Factor(red_scope, red_values)
+
+    def normalize(self):
+        val_sum = sum(self.values)
+        assert not isclose(val_sum, 0)
+        return Factor(self.scope, [val / val_sum for val in self.values])
+
+    def is_normalized(self) -> bool:
+        return isclose(1, sum(self.values))

@@ -165,3 +165,14 @@ def test_factor():
     )
 
     assert id_unnorm.reduce({"D": 1}) == Factor(Scope(I), [0.009, 0.06])
+
+    assert id_unnorm.normalize().approx(
+        Factor(Scope(I, D), [0.2818791946, 0.02013422818, 0.5637583892, 0.1342281879])
+    )
+
+    assert id_unnorm.normalize().is_normalized()
+    assert jd_idg.is_normalized()
+    assert jd_idg.normalize().approx(jd_idg)
+
+    assert jd_idg.marginalize(Scope(I, D)).is_normalized()
+    assert jd_idg.marginalize(Scope(I)).is_normalized()
