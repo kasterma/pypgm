@@ -18,6 +18,12 @@ class RandomVariable:
             and self.values == other.values
         )
 
+    def __hash__(self):
+        return hash((self.name, tuple(self.values)))
+
+    def __repr__(self):
+        return f"RandomVariable({self.name}, {self.values})"
+
 
 class Scope:
     def __init__(self, *args):
@@ -30,6 +36,26 @@ class Scope:
 
     def __eq__(self, other):
         return isinstance(other, Scope) and self.rvs == other.rvs
+
+    def equiv(self, other):
+        """Two scopes are equivalent if they have the same random variables, possibly in different order"""
+        return set(self.rvs) == set(other.rvs)
+
+    def __or__(self, other):
+        assert isinstance(other, Scope)
+        or_rvs = []
+        or_rvs.extend(self.rvs)
+        for rv in other.rvs:
+            if rv not in or_rvs:
+                or_rvs.append(rv)
+        return Scope(or_rvs)
+
+    def __and__(self, other):
+        assert isinstance(other, Scope)
+        return Scope([rv for rv in self.rvs if rv in other.rvs])
+
+    def __repr__(self):
+        return f"Scope({str([rv.name for rv in self.rvs])})"
 
 
 class Factor:

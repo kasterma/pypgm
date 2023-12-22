@@ -6,7 +6,7 @@ def flatten(ls: list) -> list:
     """
     rv = []
     for l in ls:
-        if isinstance(l, list):
+        if isinstance(l, list) or isinstance(l, tuple):
             rv.extend(l)
         else:
             rv.append(l)
