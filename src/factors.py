@@ -125,3 +125,11 @@ class Factor:
             idx_other = other.scope[mul_scope_values]
             mul_values[idx] = self.values[idx_self] * other.values[idx_other]
         return Factor(mul_scope, mul_values)
+
+    def marginalize(self, scope: Scope) -> 'Factor':
+        assert all(rv in self.scope.rvs for rv in scope.rvs)
+        marg_values = [0] * len(scope)
+        for idx in range(len(self.scope)):
+            vals = self.scope._values(idx)
+            marg_values[scope[vals]] += self.values[idx]
+        return Factor(scope, marg_values)
